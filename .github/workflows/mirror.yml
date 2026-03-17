@@ -1,0 +1,33 @@
+name: Mirror Google Flow
+on:
+  workflow_dispatch: # Allows manual refresh
+  schedule:
+    - cron: '0 * * * *' # Runs every hour
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Requests
+        run: pip install requests
+      - name: Fetch Google Flow
+        run: python fetch_flow.py
+      - name: Commit and Push
+        run: |
+          git config --global user.name "MirrorBot"
+          git config --global user.email "bot@github.com"
+          git add docs/
+          git commit -m "Update Google Flow Mirror" || exit 0
+          git push
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
