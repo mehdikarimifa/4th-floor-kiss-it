@@ -1,0 +1,20 @@
+name: Google Flow Tunnel
+on: workflow_dispatch # Manual trigger
+
+jobs:
+  proxy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: pip install flask requests
+      - name: Start Proxy & Tunnel
+        run: |
+          python proxy.py & 
+          # We use a tool like 'localtunnel' or 'ngrok' to get a URL.
+          # Since those domains might be blocked, we use a GitHub-compatible link.
+          npx localtunnel --port 8080
